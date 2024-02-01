@@ -51,6 +51,7 @@ public class FactoryObjectMapper {
         flight.setRemainingSeats(airline.getNumberOfSeats());
         flight.setFare(flightInput.getFare());
         flight.setAirline(airline);
+        System.out.println(flightInput.getDepartureDate().toString());
         flight.setDepartureDate(flightInput.getDepartureDate());
         flight.setArrivalDate(flightInput.getArrivalDate());
         flight.setDepartureLocation(flightInput.getDepartureLocation());

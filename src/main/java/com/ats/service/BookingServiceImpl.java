@@ -1,6 +1,7 @@
 package com.ats.service;
 
 import com.ats.exception.BadRequestException;
+import com.ats.exception.FlightSeatsNotAvailableException;
 import com.ats.exception.ObjectNotFoundException;
 import com.ats.model.FactoryObjectMapper;
 import com.ats.model.booking.Booking;
@@ -33,7 +34,6 @@ public class BookingServiceImpl implements BookingService{
         this.userService = userService;
     }
 
-
     @Override
     public BookingOutput bookTicket(int passengerId, BookingInput bookingInput) {
         Passenger passenger = userService.getPassenger(passengerId);
@@ -45,6 +45,11 @@ public class BookingServiceImpl implements BookingService{
         }
 
         Flight flight = flightService.getFlight(bookingInput.getFlightId());
+
+        if(flight.getRemainingSeats() - bookingInput.getBookedSeats()<0){
+            throw new FlightSeatsNotAvailableException("Seats not available");
+        }
+
         Booking booking = FactoryObjectMapper.convertBookingInputToModel(bookingInput, passenger, flight);
 
         Flight modifiedFLight = booking.getFlight();
@@ -96,7 +101,7 @@ public class BookingServiceImpl implements BookingService{
         }
 
         Flight modifiedFLight = fetchedBooking.getFlight();
-        flightService.updateFlightAfterBooking(modifiedFLight, fetchedBooking.getBookedSeats());
+        flightService.updateFlightForBookingRemoved(modifiedFLight, fetchedBooking.getBookedSeats());
 
         bookingRepository.delete(fetchedBooking);
     }

@@ -2,8 +2,8 @@ package com.ats.model.user;
 
 import com.ats.model.booking.Booking;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -18,6 +18,9 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder
 public class Passenger extends User implements Serializable {
     @Column
     private String passengerPassport;
@@ -25,6 +28,13 @@ public class Passenger extends User implements Serializable {
     @OneToMany(mappedBy = "passenger")
     @JsonIgnore
     private List<Booking> bookings;
+
+//    @Builder
+//    public Passenger(int userId, String userFullName, String userPassword, String userEmail, String userContact, String passengerPassport, List<Booking> bookings) {
+//        super(userId, userFullName, userPassword, userEmail, userContact);
+//        this.passengerPassport = passengerPassport;
+//        this.bookings = bookings;
+//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

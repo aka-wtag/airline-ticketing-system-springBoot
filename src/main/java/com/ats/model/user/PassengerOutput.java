@@ -1,10 +1,13 @@
 package com.ats.model.user;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder
 public class PassengerOutput extends UserOutput{
     private String passengerPassport;
 }

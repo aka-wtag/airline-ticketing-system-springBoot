@@ -1,5 +1,6 @@
 package com.ats.service;
 
+import com.ats.exception.BadRequestException;
 import com.ats.exception.ObjectNotFoundException;
 import com.ats.model.FactoryObjectMapper;
 import com.ats.model.airline.Airline;
@@ -27,6 +28,16 @@ public class FlightServiceImpl implements FlightService{
 
     @Override
     public Flight addFlight(FlightInput flightInput) {
+        System.out.println(flightInput.getDepartureDate());
+        System.out.println(flightInput.getDepartureTime());
+        if (flightInput.getDepartureDate().isAfter(flightInput.getArrivalDate())){
+            throw new BadRequestException("Departure Date ahead of arrival date");
+        }
+
+        if (flightInput.getDepartureDate().isEqual(flightInput.getArrivalDate()) && flightInput.getDepartureTime().isAfter(flightInput.getArrivalTime())){
+            throw new BadRequestException("Departure Time ahead of arrival Time");
+        }
+
         Airline airline = airlineService.getAirline(flightInput.getAirlineId());
         Flight flight = FactoryObjectMapper.convertFlightInputToModel(flightInput, airline);
         return flightRepository.save(flight);

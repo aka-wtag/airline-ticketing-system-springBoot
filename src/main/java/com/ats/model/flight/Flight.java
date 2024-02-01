@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -18,13 +20,13 @@ public class Flight implements Serializable {
     @GeneratedValue
     public int flightId;
     @Column(nullable = false)
-    private String departureDate;
+    private LocalDate departureDate;
     @Column(nullable = false)
-    private String departureTime;
+    private LocalTime departureTime;
     @Column(nullable = false)
-    private String arrivalDate;
+    private LocalDate arrivalDate;
     @Column(nullable = false)
-    private String arrivalTime;
+    private LocalTime arrivalTime;
     @Column(nullable = false)
     private String departureLocation;
     @Column(nullable = false)
@@ -40,5 +42,4 @@ public class Flight implements Serializable {
 
     @ManyToOne
     private Airline airline;
-
-    }
+}
