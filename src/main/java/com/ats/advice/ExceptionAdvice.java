@@ -1,11 +1,9 @@
 package com.ats.advice;
 
 
-import com.ats.exception.BadRequestException;
-import com.ats.exception.FlightSeatsNotAvailableException;
-import com.ats.exception.ObjectNotFoundException;
-import com.ats.exception.UserAlreadyExistsException;
+import com.ats.exception.*;
 import com.ats.message.ErrorMessage;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,39 +36,31 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String,String> handleException(MethodArgumentNotValidException exception){
         Map<String,String> errorMap = new HashMap<>();
-        exception.getBindingResult().getFieldErrors().forEach(error ->{
-            errorMap.put(error.getField(),error.getDefaultMessage());
-        });
+        exception.getBindingResult().getFieldErrors().forEach(error -> errorMap.put(error.getField(),error.getDefaultMessage()));
         return errorMap;
     }
 
     @ExceptionHandler(ObjectNotFoundException.class)
-    public ResponseEntity<ErrorMessage> handleObjectNotFoundException(RuntimeException exception){
+    public ResponseEntity<ErrorMessage> handleObjectNotFoundException(ObjectNotFoundException exception){
         errorMessage.setMessage(exception.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ErrorMessage> handleUserAlreadyExistsException(RuntimeException exception){
+    public ResponseEntity<ErrorMessage> handleUserAlreadyExistsException(UserAlreadyExistsException exception){
         errorMessage.setMessage(exception.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorMessage> exceptionHandler(BadRequestException exception) {
+    public ResponseEntity<ErrorMessage> exceptionHandler(BadCredentialsException exception) {
         errorMessage.setMessage(exception.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorMessage);
     }
 
-    @ExceptionHandler(FlightSeatsNotAvailableException.class)
-    public ResponseEntity<ErrorMessage> flightSeatsNotAvailableExceptionHandler(FlightSeatsNotAvailableException exception) {
-        errorMessage.setMessage(exception.getMessage());
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorMessage);
-    }
-
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorMessage> httpMessageNotReadableExceptionHandler() {
-        errorMessage.setMessage("Error in date or time field");
+        errorMessage.setMessage("Error in input. Cannot process entity");
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorMessage);
     }
 }

@@ -13,9 +13,6 @@ import javax.persistence.*;
 @Table(name = "users")
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@SuperBuilder
 public abstract class User implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

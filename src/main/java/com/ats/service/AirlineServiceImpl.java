@@ -3,7 +3,8 @@ package com.ats.service;
 import com.ats.exception.ObjectNotFoundException;
 import com.ats.model.FactoryObjectMapper;
 import com.ats.model.airline.Airline;
-import com.ats.model.airline.AirlineInput;
+import com.ats.model.airline.CreateAirlineDto;
+import com.ats.model.airline.UpdateAirlineDto;
 import com.ats.repository.AirlineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,24 +22,26 @@ public class AirlineServiceImpl implements AirlineService {
         this.airlineRepository = airlineDao;
     }
 
-
     @Override
-    public Airline addAirline(AirlineInput airlineInput) {
-        Airline airline = FactoryObjectMapper.convertAirlineInputToModel(airlineInput);
+    public Airline addAirline(CreateAirlineDto createAirlineDto) {
+        Airline airline = FactoryObjectMapper.convertAirlineInputToModel(createAirlineDto);
         return airlineRepository.save(airline);
     }
 
     @Override
-    public Airline updateAirline(String airlineId, AirlineInput airlineInput) {
+    public Airline updateAirline(int airlineId, UpdateAirlineDto updateAirlineDto) {
         Airline dbAirline = airlineRepository.findById(airlineId).orElseThrow(() -> new ObjectNotFoundException("Airline " + airlineId + " not found"));
 
-        if(airlineInput.getAirlineName()!=null) dbAirline.setAirlineName(airlineInput.getAirlineName());
-        if(airlineInput.getNumberOfSeats()!=0) dbAirline.setNumberOfSeats(airlineInput.getNumberOfSeats());
+        // Setting fields to database object
+        if(updateAirlineDto.getAirlineModel()!=null) dbAirline.setAirlineModel(updateAirlineDto.getAirlineModel());
+        if(updateAirlineDto.getAirlineName()!=null) dbAirline.setAirlineName(updateAirlineDto.getAirlineName());
+        if(updateAirlineDto.getNumberOfSeats()!=null) dbAirline.setNumberOfSeats(updateAirlineDto.getNumberOfSeats());
+
         return airlineRepository.save(dbAirline);
     }
 
     @Override
-    public void deleteAirline(String airlineId) {
+    public void deleteAirline(int airlineId) {
         Airline fetchedAirline = airlineRepository.findById(airlineId).orElseThrow(() -> new ObjectNotFoundException("Airline " + airlineId + " not found"));
         airlineRepository.delete(fetchedAirline);
     }
@@ -50,7 +53,7 @@ public class AirlineServiceImpl implements AirlineService {
 
     @Override
     @Transactional(readOnly = true)
-    public Airline getAirline(String airlineId) {
+    public Airline getAirline(int airlineId) {
         return airlineRepository.findById(airlineId).orElseThrow(() -> new ObjectNotFoundException("Airline " + airlineId + " not found"));
     }
 }

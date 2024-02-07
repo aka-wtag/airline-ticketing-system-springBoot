@@ -11,12 +11,11 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 public class Airline implements Serializable {
     @Id
-    private String airlineId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int airlineId;
+    private String airlineModel;
     private String airlineName;
     private int numberOfSeats;
 

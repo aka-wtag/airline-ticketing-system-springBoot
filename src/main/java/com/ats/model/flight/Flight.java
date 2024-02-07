@@ -2,9 +2,11 @@ package com.ats.model.flight;
 
 import com.ats.model.airline.Airline;
 import com.ats.model.booking.Booking;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -20,12 +22,16 @@ public class Flight implements Serializable {
     @GeneratedValue
     public int flightId;
     @Column(nullable = false)
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate departureDate;
     @Column(nullable = false)
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime departureTime;
     @Column(nullable = false)
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate arrivalDate;
     @Column(nullable = false)
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime arrivalTime;
     @Column(nullable = false)
     private String departureLocation;

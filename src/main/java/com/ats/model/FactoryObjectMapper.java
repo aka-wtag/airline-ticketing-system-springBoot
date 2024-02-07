@@ -1,92 +1,89 @@
 package com.ats.model;
 
 import com.ats.model.airline.Airline;
-import com.ats.model.airline.AirlineInput;
+import com.ats.model.airline.CreateAirlineDto;
 import com.ats.model.booking.Booking;
-import com.ats.model.booking.BookingInput;
-import com.ats.model.booking.BookingOutput;
+import com.ats.model.booking.CreateBookingDto;
+import com.ats.model.booking.BookingOutputDto;
 import com.ats.model.flight.Flight;
-import com.ats.model.flight.FlightInput;
+import com.ats.model.flight.CreateFlightDto;
 import com.ats.model.user.Passenger;
-import com.ats.model.user.PassengerInput;
-import com.ats.model.user.PassengerOutput;
+import com.ats.model.user.CreatePassengerDto;
+import com.ats.model.user.PassengerOutputDto;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class FactoryObjectMapper {
-    public static Passenger convertPassengerInputToModel(PassengerInput passengerInput){
+    public static Passenger convertPassengerInputToModel(CreatePassengerDto createPassengerDto){
         Passenger passenger = new Passenger();
-        passenger.setUserFullName(passengerInput.getUserFullName());
-        passenger.setUserEmail(passengerInput.getUserEmail());
-        passenger.setUserPassword(passengerInput.getUserPassword());
-        passenger.setUserContact(passengerInput.getUserContact());
-        passenger.setPassengerPassport(passengerInput.getPassengerPassport());
+        passenger.setUserFullName(createPassengerDto.getUserFullName());
+        passenger.setUserEmail(createPassengerDto.getUserEmail());
+        passenger.setUserPassword(createPassengerDto.getUserPassword());
+        passenger.setUserContact(createPassengerDto.getUserContact());
+        passenger.setPassengerPassport(createPassengerDto.getPassengerPassport());
         return passenger;
     }
 
-    public static PassengerOutput convertPassengerEntityToPassengerOutput(Passenger passenger){
-        PassengerOutput passengerOutput = new PassengerOutput();
-        passengerOutput.setUserId(passenger.getUserId());
-        passengerOutput.setUserFullName(passenger.getUserFullName());
-        passengerOutput.setUserEmail(passenger.getUserEmail());
-        passengerOutput.setUserContact(passenger.getUserContact());
-        passengerOutput.setPassengerPassport(passenger.getPassengerPassport());
+    public static PassengerOutputDto convertPassengerEntityToPassengerOutput(Passenger passenger){
+        PassengerOutputDto passengerOutputDto = new PassengerOutputDto();
+        passengerOutputDto.setUserId(passenger.getUserId());
+        passengerOutputDto.setUserFullName(passenger.getUserFullName());
+        passengerOutputDto.setUserEmail(passenger.getUserEmail());
+        passengerOutputDto.setUserContact(passenger.getUserContact());
+        passengerOutputDto.setPassengerPassport(passenger.getPassengerPassport());
 
-        return passengerOutput;
+        return passengerOutputDto;
     }
 
-    public static Airline convertAirlineInputToModel(AirlineInput airlineInput){
+    public static Airline convertAirlineInputToModel(CreateAirlineDto createAirlineDto){
         Airline airline = new Airline();
-        airline.setAirlineId(airlineInput.getAirlineId());
-        airline.setAirlineName(airlineInput.getAirlineName());
-        airline.setNumberOfSeats(airlineInput.getNumberOfSeats());
+        airline.setAirlineModel(createAirlineDto.getAirlineModel());
+        airline.setAirlineName(createAirlineDto.getAirlineName());
+        airline.setNumberOfSeats(createAirlineDto.getNumberOfSeats());
         return airline;
     }
 
 
-    public static Flight convertFlightInputToModel(FlightInput flightInput, Airline airline){
+    public static Flight convertFlightInputToModel(CreateFlightDto createFlightDto, Airline airline){
         Flight flight = new Flight();
 
         flight.setRemainingSeats(airline.getNumberOfSeats());
-        flight.setFare(flightInput.getFare());
+        flight.setFare(createFlightDto.getFare());
         flight.setAirline(airline);
-        System.out.println(flightInput.getDepartureDate().toString());
-        flight.setDepartureDate(flightInput.getDepartureDate());
-        flight.setArrivalDate(flightInput.getArrivalDate());
-        flight.setDepartureLocation(flightInput.getDepartureLocation());
-        flight.setArrivalLocation(flightInput.getArrivalLocation());
-        flight.setDepartureTime(flightInput.getDepartureTime());
-        flight.setArrivalTime(flightInput.getArrivalTime());
+        System.out.println(createFlightDto.getDepartureDate());
+        flight.setDepartureDate(createFlightDto.getDepartureDate());
+        flight.setArrivalDate(createFlightDto.getArrivalDate());
+        flight.setDepartureLocation(createFlightDto.getDepartureLocation());
+        flight.setArrivalLocation(createFlightDto.getArrivalLocation());
+        flight.setDepartureTime(createFlightDto.getDepartureTime());
+        flight.setArrivalTime(createFlightDto.getArrivalTime());
 
         return flight;
     }
 
-    public static Booking convertBookingInputToModel(BookingInput bookingInput, Passenger passenger, Flight flight) {
+    public static Booking convertBookingInputToModel(CreateBookingDto createBookingDto, Passenger passenger, Flight flight) {
         Booking booking = new Booking();
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        booking.setBookingDate(dtf.format(now));
-        booking.setBookedSeats(bookingInput.getBookedSeats());
-        booking.setBookingAmount(flight.getFare()*bookingInput.getBookedSeats());
+        booking.setBookingDate(LocalDateTime.now());
+        booking.setBookedSeats(createBookingDto.getBookedSeats());
+        booking.setBookingAmount(flight.getFare()*createBookingDto.getBookedSeats());
         booking.setPassenger(passenger);
         booking.setFlight(flight);
 
         return booking;
     }
 
-    public static BookingOutput convertModelToBookingOutput(Booking booking) {
-        BookingOutput bookingOutput = new BookingOutput();
+    public static BookingOutputDto convertModelToBookingOutput(Booking booking) {
+        BookingOutputDto bookingOutputDto = new BookingOutputDto();
 
-        bookingOutput.setBookingNumber(booking.getBookingNumber());
-        bookingOutput.setBookingDate(booking.getBookingDate());
-        bookingOutput.setBookedSeats(booking.getBookedSeats());
-        bookingOutput.setBookingAmount(booking.getBookingAmount());
+        bookingOutputDto.setBookingNumber(booking.getBookingNumber());
+        bookingOutputDto.setBookingDate(booking.getBookingDate());
+        bookingOutputDto.setBookedSeats(booking.getBookedSeats());
+        bookingOutputDto.setBookingAmount(booking.getBookingAmount());
 
-        bookingOutput.setPassenger(FactoryObjectMapper.convertPassengerEntityToPassengerOutput(booking.getPassenger()));
-        bookingOutput.setFlight(booking.getFlight());
+        bookingOutputDto.setPassenger(FactoryObjectMapper.convertPassengerEntityToPassengerOutput(booking.getPassenger()));
+        bookingOutputDto.setFlight(booking.getFlight());
 
-        return bookingOutput;
+        return bookingOutputDto;
     }
 }

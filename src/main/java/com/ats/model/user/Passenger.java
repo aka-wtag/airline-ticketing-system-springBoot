@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -18,23 +19,13 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@SuperBuilder
 public class Passenger extends User implements Serializable {
     @Column
     private String passengerPassport;
 
-    @OneToMany(mappedBy = "passenger")
+    @OneToMany(mappedBy = "passenger", cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<Booking> bookings;
-
-//    @Builder
-//    public Passenger(int userId, String userFullName, String userPassword, String userEmail, String userContact, String passengerPassport, List<Booking> bookings) {
-//        super(userId, userFullName, userPassword, userEmail, userContact);
-//        this.passengerPassport = passengerPassport;
-//        this.bookings = bookings;
-//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

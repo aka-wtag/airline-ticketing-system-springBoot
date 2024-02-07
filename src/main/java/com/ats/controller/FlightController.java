@@ -1,7 +1,9 @@
 package com.ats.controller;
 
 import com.ats.model.flight.Flight;
-import com.ats.model.flight.FlightInput;
+import com.ats.model.flight.CreateFlightDto;
+import com.ats.model.flight.SearchFlightDto;
+import com.ats.model.flight.UpdateFlightDto;
 import com.ats.service.AirlineService;
 import com.ats.service.FlightService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +30,8 @@ public class FlightController {
     }
 
     @PostMapping
-    public ResponseEntity<Flight> addFlight(@Valid @RequestBody FlightInput flightInput){
-        return new ResponseEntity<>(flightService.addFlight(flightInput), HttpStatus.CREATED);
+    public ResponseEntity<Flight> addFlight(@Valid @RequestBody CreateFlightDto createFlightDto){
+        return new ResponseEntity<>(flightService.addFlight(createFlightDto), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -41,15 +43,14 @@ public class FlightController {
 
     @GetMapping(value = "/searched-flights")
     @PreAuthorize("permitAll()")
-    public ResponseEntity<List<Flight>> getFilteredFlights(@RequestBody Map<String, String> filterFields){
+    public ResponseEntity<List<Flight>> getFilteredFlights(@Valid @RequestBody SearchFlightDto filterFields){
         List<Flight> flights = flightService.getFilteredFlights(filterFields);
         return ResponseEntity.ok(flights);
     }
 
     @PutMapping(value = "/{flightId}")
-    public ResponseEntity<Flight> updateFlight(@PathVariable int flightId, @RequestBody FlightInput flightInput){
-        Flight modifiedFlight = flightService.updateFlight(flightId, flightInput);
-
+    public ResponseEntity<Flight> updateFlight(@PathVariable int flightId, @RequestBody UpdateFlightDto updateFlightDto){
+        Flight modifiedFlight = flightService.updateFlight(flightId, updateFlightDto);
         return ResponseEntity.ok(modifiedFlight);
     }
 

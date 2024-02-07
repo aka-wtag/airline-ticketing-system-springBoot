@@ -1,14 +1,15 @@
 package com.ats.service;
 
 import com.ats.model.airline.Airline;
-import com.ats.model.airline.AirlineInput;
+import com.ats.model.airline.CreateAirlineDto;
+import com.ats.model.airline.UpdateAirlineDto;
 
 import java.util.List;
 
 public interface AirlineService {
-    Airline addAirline(AirlineInput airlineInput);
-    Airline updateAirline(String airlineId, AirlineInput airlineInput);
-    void deleteAirline(String airlineId);
+    Airline addAirline(CreateAirlineDto createAirlineDto);
+    Airline updateAirline(int airlineId, UpdateAirlineDto updateAirlineDto);
+    void deleteAirline(int airlineId);
     List<Airline> getAllAirline();
-    Airline getAirline(String airlineId);
+    Airline getAirline(int airlineId);
 }

@@ -1,7 +1,8 @@
 package com.ats.controller;
 
 import com.ats.model.airline.Airline;
-import com.ats.model.airline.AirlineInput;
+import com.ats.model.airline.CreateAirlineDto;
+import com.ats.model.airline.UpdateAirlineDto;
 import com.ats.service.AirlineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,8 @@ public class AirlineController {
     }
 
     @PostMapping
-    public ResponseEntity<Airline> addAirline(@Valid @RequestBody AirlineInput airlineInput){
-        return new ResponseEntity<>(airlineService.addAirline(airlineInput), HttpStatus.CREATED);
+    public ResponseEntity<Airline> addAirline(@Valid @RequestBody CreateAirlineDto createAirlineDto){
+        return new ResponseEntity<>(airlineService.addAirline(createAirlineDto), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -34,14 +35,20 @@ public class AirlineController {
         return ResponseEntity.ok(airlines);
     }
 
+    @GetMapping(value = "/{airlineId}")
+    public ResponseEntity<Airline> getAirline(@PathVariable int airlineId){
+        Airline airline = airlineService.getAirline(airlineId);
+        return ResponseEntity.ok(airline);
+    }
+
     @PutMapping(value = "/{airlineId}")
-    public ResponseEntity<Airline> updateAirline(@PathVariable String airlineId, @RequestBody  AirlineInput airlineInput){
-        Airline modifiedAirline = airlineService.updateAirline(airlineId, airlineInput);
+    public ResponseEntity<Airline> updateAirline(@PathVariable int airlineId, @RequestBody UpdateAirlineDto updateAirlineDto){
+        Airline modifiedAirline = airlineService.updateAirline(airlineId, updateAirlineDto);
         return ResponseEntity.ok(modifiedAirline);
     }
 
     @DeleteMapping(value = "/{airlineId}")
-    public ResponseEntity<Void> deleteAirline(@PathVariable String airlineId){
+    public ResponseEntity<Void> deleteAirline(@PathVariable int airlineId){
         airlineService.deleteAirline(airlineId);
         return ResponseEntity.noContent().build();
     }

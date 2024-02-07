@@ -1,14 +1,15 @@
 package com.ats.service;
 
-import com.ats.model.user.Passenger;
-import com.ats.model.user.PassengerInput;
-import com.ats.model.user.PassengerOutput;
-import com.ats.model.user.User;
+import com.ats.model.user.*;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.List;
+
 public interface UserService extends UserDetailsService {
-    PassengerOutput registerPassenger(PassengerInput passengerInput);
-    PassengerOutput updatePassengerDetails(int passengerId, PassengerInput passengerInput);
+    PassengerOutputDto registerPassenger(CreatePassengerDto createPassengerDto);
+    PassengerOutputDto updatePassengerDetails(int passengerId, UpdatePassengerDto updatePassengerDto);
     Passenger getPassenger(int passengerId);
     User loadUserByUsername(String userEmail);
+    void deletePassenger(int passengerId);
+    List<PassengerOutputDto> getAllPassengers();
 }

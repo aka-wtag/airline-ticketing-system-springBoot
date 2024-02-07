@@ -1,7 +1,6 @@
 package com.ats.config.jwt;
 
-import com.ats.model.user.User;
-import com.ats.service.UserService;
+import com.ats.service.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +17,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtHelper jwtHelper;
+    private final JwtService jwtHelper;
     private final UserDetailsService userDetailsService;
 
     @Autowired
-    public JwtAuthenticationFilter(JwtHelper jwtHelper, UserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(JwtService jwtHelper, UserDetailsService userDetailsService) {
         this.jwtHelper = jwtHelper;
         this.userDetailsService = userDetailsService;
     }
@@ -42,24 +42,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             token = requestHeader.substring(7);
             try {
                 username = this.jwtHelper.getUsernameFromToken(token);
-                System.out.println(username + " is authenticated");
-            } catch (IllegalArgumentException e) {
-                logger.info("Illegal Argument while fetching the username !!");
+                logger.info(username + " is authenticated");
             } catch (ExpiredJwtException e) {
                 logger.info("Given jwt token is expired !!");
             } catch (MalformedJwtException e) {
-                logger.info("Some change has done in token !! Invalid Token");
+                logger.info("Invalid Token");
             } catch (Exception e) {
                 logger.info(e);
             }
         } else {
-            logger.info("Authentication not present !! ");
+            logger.info("Authentication not present!");
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            Boolean validateToken = this.jwtHelper.validateToken(token, userDetails);
-            if (validateToken) {
+
+            // checking token validation and checking if token is invalidated (logout) or not
+            if (Objects.nonNull(userDetails) && jwtHelper.validateToken(token, userDetails) && jwtHelper.isTokenInBlacklist(token)) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -67,6 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     logger.info("Validation fails !!");
             }
         }
+
         filterChain.doFilter(request, response);
     }
 }

@@ -1,8 +1,8 @@
 package com.ats.controller;
 
 
-import com.ats.model.booking.BookingInput;
-import com.ats.model.booking.BookingOutput;
+import com.ats.model.booking.CreateBookingDto;
+import com.ats.model.booking.BookingOutputDto;
 import com.ats.service.BookingService;
 import com.ats.service.FlightService;
 import com.ats.service.UserService;
@@ -16,8 +16,6 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/passengers")
-@PreAuthorize("hasRole('Passenger')")
 public class BookingController {
     BookingService bookingService;
     UserService userService;
@@ -30,26 +28,28 @@ public class BookingController {
         this.flightService = flightService;
     }
 
-    @PostMapping(value = "/{passengerId}/bookings")
-    public ResponseEntity<BookingOutput> bookTicket(@PathVariable int passengerId, @Valid @RequestBody BookingInput bookingInput) {
-        return new ResponseEntity<>(bookingService.bookTicket(passengerId, bookingInput), HttpStatus.CREATED);
+    @PostMapping(value = "/passengers/{passengerId}/bookings")
+    @PreAuthorize("hasRole('Passenger')")
+    public ResponseEntity<BookingOutputDto> bookTicket(@PathVariable int passengerId, @Valid @RequestBody CreateBookingDto createBookingDto) {
+        return new ResponseEntity<>(bookingService.bookTicket(passengerId, createBookingDto), HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/{passengerId}/bookings")
+    @GetMapping(value = "/passengers/{passengerId}/bookings")
     @PreAuthorize("hasAnyRole({'Admin', 'Passenger'})")
-    public ResponseEntity<List<BookingOutput>> getBookings(@PathVariable int passengerId){
+    public ResponseEntity<List<BookingOutputDto>> getBookings(@PathVariable int passengerId){
         return ResponseEntity.ok(bookingService.getBookings(passengerId));
     }
 
 
     @GetMapping(value = "/bookings")
-    @PreAuthorize("hasAnyRole({'Admin', 'Passenger'})")
-    public ResponseEntity<List<BookingOutput>> getAllBookings(){
-        List<BookingOutput> bookings = bookingService.getAllBookings();
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<List<BookingOutputDto>> getAllBookings(){
+        List<BookingOutputDto> bookings = bookingService.getAllBookings();
         return ResponseEntity.ok(bookings);
     }
 
-    @DeleteMapping(value = "{passengerId}/bookings/{bookingId}")
+    @DeleteMapping(value = "/passengers/{passengerId}/bookings/{bookingId}")
+    @PreAuthorize("hasAnyRole({'Admin', 'Passenger'})")
     public ResponseEntity<Void> deleteTicket(@PathVariable int passengerId, @PathVariable int bookingId){
         bookingService.deleteTicket(passengerId, bookingId);
         return ResponseEntity.noContent().build();

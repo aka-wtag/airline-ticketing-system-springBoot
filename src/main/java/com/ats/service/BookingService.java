@@ -1,14 +1,13 @@
 package com.ats.service;
 
-import com.ats.model.booking.Booking;
-import com.ats.model.booking.BookingInput;
-import com.ats.model.booking.BookingOutput;
+import com.ats.model.booking.CreateBookingDto;
+import com.ats.model.booking.BookingOutputDto;
 
 import java.util.List;
 
 public interface BookingService {
-    BookingOutput bookTicket(int passengerId, BookingInput bookingInput);
-    List<BookingOutput> getBookings(int passengerId);
-    List<BookingOutput> getAllBookings();
+    BookingOutputDto bookTicket(int passengerId, CreateBookingDto createBookingDto);
+    List<BookingOutputDto> getBookings(int passengerId);
+    List<BookingOutputDto> getAllBookings();
     void deleteTicket(int passengerId, int bookingId);
 }
