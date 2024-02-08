@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public PassengerOutputDto updatePassengerDetails(int passengerId, UpdatePassengerDto updatePassengerDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Passenger dbPassenger = (Passenger) userRepository.findById(passengerId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
+        Passenger dbPassenger = getPassenger(passengerId);
 
         // Checking if request from the authenticated user
         if(authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_Admin")) &&
@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deletePassenger(int passengerId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Passenger dbPassenger = (Passenger) userRepository.findById(passengerId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
+        Passenger dbPassenger = getPassenger(passengerId);
 
         // Checking if request from the authenticated user
         if(authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_Admin")) &&

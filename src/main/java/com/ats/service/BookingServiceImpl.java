@@ -120,7 +120,6 @@ public class BookingServiceImpl implements BookingService{
              }
         }
 
-
         Flight flight = fetchedBooking.getFlight();
 
         // Checking if booking cancellation is 12 hrs before departure time or not

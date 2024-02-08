@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/airlines")
 @PreAuthorize("hasRole('Admin')")
 public class AirlineController {
-    AirlineService airlineService;
+    private final AirlineService airlineService;
 
     @Autowired
     public AirlineController(AirlineService airlineService) {

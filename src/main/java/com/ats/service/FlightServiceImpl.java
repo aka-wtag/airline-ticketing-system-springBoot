@@ -6,7 +6,6 @@ import com.ats.model.FactoryObjectMapper;
 import com.ats.model.airline.Airline;
 import com.ats.model.flight.Flight;
 import com.ats.model.flight.CreateFlightDto;
-import com.ats.model.flight.SearchFlightDto;
 import com.ats.model.flight.UpdateFlightDto;
 import com.ats.repository.FlightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @Service
 @Transactional
@@ -61,11 +57,11 @@ public class FlightServiceImpl implements FlightService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<Flight> getFilteredFlights(SearchFlightDto filterFields) {
+    public List<Flight> getFilteredFlights(LocalDate departureDate, String departureLocation, String arrivalLocation) {
         return flightRepository.findAllByDepartureLocationAndArrivalLocationAndDepartureDate(
-                filterFields.getDepartureLocation(),
-                filterFields.getArrivalLocation(),
-                filterFields.getDepartureDate());
+                arrivalLocation,
+                departureLocation,
+                departureDate);
     }
 
     @Override

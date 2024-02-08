@@ -1,6 +1,7 @@
 package com.ats.config.jwt;
 
 import com.ats.service.JwtService;
+import com.ats.util.TokenType;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +38,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String requestHeader = request.getHeader("Authorization");
         String username = null;
         String token = null;
+        TokenType secret = TokenType.ACCESS;
+
+        if(request.getRequestURI().equals("/users/refresh-token")){
+            secret = TokenType.REFRESH;
+        }
 
         if (requestHeader != null && requestHeader.startsWith("Bearer")) {
             token = requestHeader.substring(7);
             try {
-                username = this.jwtHelper.getUsernameFromToken(token);
+                username = this.jwtHelper.getUsernameFromToken(token, secret);
                 logger.info(username + " is authenticated");
             } catch (ExpiredJwtException e) {
                 logger.info("Given jwt token is expired !!");
@@ -58,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             // checking token validation and checking if token is invalidated (logout) or not
-            if (Objects.nonNull(userDetails) && jwtHelper.validateToken(token, userDetails) && jwtHelper.isTokenInBlacklist(token)) {
+            if (Objects.nonNull(userDetails) && jwtHelper.validateToken(token, userDetails, secret) && jwtHelper.isTokenInBlacklist(token)) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);

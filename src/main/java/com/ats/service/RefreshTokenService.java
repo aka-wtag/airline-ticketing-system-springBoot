@@ -1,11 +1,12 @@
 package com.ats.service;
 
-import com.ats.exception.BadRequestException;
-import com.ats.model.jwt.RefreshTokenInputDto;
 import com.ats.model.jwt.RefreshTokenResponse;
 import com.ats.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.security.Principal;
 
 @Service
 public class RefreshTokenService {
@@ -18,19 +19,13 @@ public class RefreshTokenService {
         this.userService = userService;
     }
 
-    public RefreshTokenResponse createTokenFromRefreshToken(RefreshTokenInputDto refreshTokenInputDto){
-        String username = "";
-        try {
-            username = jwtService.getUsernameFromToken(refreshTokenInputDto.getToken());
-        } catch (Exception e){
-            throw new BadRequestException("Invalid token");
-        }
+    public RefreshTokenResponse createTokenFromRefreshToken(){
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
 
-        User user = userService.loadUserByUsername(username);
-
-        if(!jwtService.validateToken(refreshTokenInputDto.getToken(), user)){
-            throw new BadRequestException("Token is not valid");
-        }
+        User user = userService.loadUserByUsername(principal.getName());
+//        if(!jwtService.validateToken(refreshTokenInputDto.getToken(), user)){
+//            throw new BadRequestException("Token is not valid");
+//        }
 
         String newAccessToken = jwtService.generateAccessToken(user);
         String newRefreshToken = jwtService.generateRefreshToken(user);
