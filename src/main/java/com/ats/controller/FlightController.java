@@ -1,7 +1,7 @@
 package com.ats.controller;
 
-import com.ats.model.flight.Flight;
 import com.ats.model.flight.CreateFlightDto;
+import com.ats.model.flight.Flight;
 import com.ats.model.flight.UpdateFlightDto;
 import com.ats.service.AirlineService;
 import com.ats.service.FlightService;
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
