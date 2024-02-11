@@ -37,6 +37,26 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .authorizeRequests()
+                .antMatchers("/users/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/passengers").permitAll()
+                .antMatchers(HttpMethod.PUT, "/passengers/*").hasAnyRole("Admin", "Passenger")
+                .antMatchers(HttpMethod.DELETE, "/passengers/*").hasAnyRole("Admin", "Passenger")
+                .antMatchers(HttpMethod.GET, "/passengers").hasRole("Admin")
+                .antMatchers(HttpMethod.GET, "/passengers/*").hasRole("Admin")
+                .antMatchers("/airlines").hasRole("Admin")
+                .antMatchers("/airlines/*").hasRole("Admin")
+                .antMatchers(HttpMethod.POST,"/flights").hasRole("Admin")
+                .antMatchers(HttpMethod.PUT,"/flights/*").hasRole("Admin")
+                .antMatchers(HttpMethod.DELETE,"/flights/*").hasRole("Admin")
+                .antMatchers(HttpMethod.GET, "/flights").permitAll()
+                .antMatchers(HttpMethod.GET, "/flights/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/passengers/*/bookings").hasRole("Passenger")
+                .antMatchers(HttpMethod.GET, "/passengers/*/bookings/*").hasAnyRole("Admin", "Passenger")
+                .antMatchers(HttpMethod.GET, "/bookings").hasRole("Admin")
+                .antMatchers(HttpMethod.DELETE, "/passengers/*/bookings/*").hasAnyRole("Admin", "Passenger")
+                .anyRequest().authenticated()
+                .and()
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(point))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

@@ -29,27 +29,23 @@ public class BookingController {
     }
 
     @PostMapping(value = "/passengers/{passengerId}/bookings")
-    @PreAuthorize("hasRole('Passenger')")
     public ResponseEntity<BookingOutputDto> bookTicket(@PathVariable int passengerId, @Valid @RequestBody CreateBookingDto createBookingDto) {
         return new ResponseEntity<>(bookingService.bookTicket(passengerId, createBookingDto), HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/passengers/{passengerId}/bookings")
-    @PreAuthorize("hasAnyRole({'Admin', 'Passenger'})")
     public ResponseEntity<List<BookingOutputDto>> getBookings(@PathVariable int passengerId){
         return ResponseEntity.ok(bookingService.getBookings(passengerId));
     }
 
 
     @GetMapping(value = "/bookings")
-    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<List<BookingOutputDto>> getAllBookings(){
         List<BookingOutputDto> bookings = bookingService.getAllBookings();
         return ResponseEntity.ok(bookings);
     }
 
     @DeleteMapping(value = "/passengers/{passengerId}/bookings/{bookingId}")
-    @PreAuthorize("hasAnyRole({'Admin', 'Passenger'})")
     public ResponseEntity<Void> deleteTicket(@PathVariable int passengerId, @PathVariable int bookingId){
         bookingService.deleteTicket(passengerId, bookingId);
         return ResponseEntity.noContent().build();

@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/airlines")
-@PreAuthorize("hasRole('Admin')")
 public class AirlineController {
     private final AirlineService airlineService;
 

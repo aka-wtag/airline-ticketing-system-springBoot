@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@PreAuthorize("hasAnyRole({'Admin', 'Passenger'})")
 public class RefreshTokenController {
     private final RefreshTokenService refreshTokenService;
 

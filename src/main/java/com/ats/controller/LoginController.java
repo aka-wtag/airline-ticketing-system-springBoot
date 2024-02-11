@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@PreAuthorize("permitAll()")
 public class LoginController {
     private final LoginService loginService;
 

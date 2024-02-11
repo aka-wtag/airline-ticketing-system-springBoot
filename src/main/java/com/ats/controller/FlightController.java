@@ -18,7 +18,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/flights")
-@PreAuthorize("hasRole('Admin')")
 public class FlightController {
     FlightService flightService;
     AirlineService airlineService;
@@ -35,14 +34,12 @@ public class FlightController {
     }
 
     @GetMapping
-    @PreAuthorize("permitAll()")
     public ResponseEntity<List<Flight>> getAllFlight(){
         List<Flight> flights = flightService.getAllFlights();
         return ResponseEntity.ok(flights);
     }
 
     @GetMapping(value = "/searched-flights")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<List<Flight>> getFilteredFlights(@RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate departureDate,
                                                            @RequestParam String departureLocation,
                                                            @RequestParam String arrivalLocation){
