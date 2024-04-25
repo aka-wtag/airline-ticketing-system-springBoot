@@ -93,7 +93,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUserEmail(userEmail);
     }
 
-    @Override
+  @Override
+  public User loadUserById(int userId) {
+    return userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
+  }
+
+  @Override
     public void deletePassenger(int passengerId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Passenger dbPassenger = getPassenger(passengerId);

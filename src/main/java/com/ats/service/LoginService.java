@@ -2,6 +2,8 @@ package com.ats.service;
 
 import com.ats.model.jwt.JWTRequest;
 import com.ats.model.jwt.RefreshTokenResponse;
+import com.ats.model.user.User;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,10 +34,10 @@ public class LoginService {
             throw new BadCredentialsException("Bad credentials");
         }
 
-        UserDetails userDetails = userService.loadUserByUsername(request.getEmail());
+        User user = userService.loadUserByUsername(request.getEmail());
 
-        String accessToken = this.jwtService.generateAccessToken(userDetails);
-        String refreshToken = this.jwtService.generateRefreshToken(userDetails);
+        String accessToken = this.jwtService.generateAccessToken(String.valueOf(user.getUserId()), user.getClass().getSimpleName());
+        String refreshToken = this.jwtService.generateRefreshToken(String.valueOf(user.getUserId()), user.getClass().getSimpleName());
 
         return RefreshTokenResponse
                 .builder()

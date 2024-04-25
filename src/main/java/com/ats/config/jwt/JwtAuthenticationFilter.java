@@ -1,14 +1,14 @@
 package com.ats.config.jwt;
 
+import com.ats.model.user.User;
 import com.ats.service.JwtService;
+import com.ats.service.UserService;
 import com.ats.util.TokenType;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -23,12 +23,12 @@ import java.util.Objects;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtHelper;
-    private final UserDetailsService userDetailsService;
+    private final UserService userService;
 
     @Autowired
-    public JwtAuthenticationFilter(JwtService jwtHelper, UserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(JwtService jwtHelper, UserService userService) {
         this.jwtHelper = jwtHelper;
-        this.userDetailsService = userDetailsService;
+        this.userService = userService;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String requestHeader = request.getHeader("Authorization");
-        String username = null;
+        int userId = 0;
         String token = null;
         TokenType secret = TokenType.ACCESS;
 
@@ -47,8 +47,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (requestHeader != null && requestHeader.startsWith("Bearer")) {
             token = requestHeader.substring(7);
             try {
-                username = this.jwtHelper.getUsernameFromToken(token, secret);
-                logger.info(username + " is authenticated");
+              userId = Integer.parseInt(this.jwtHelper.getUserIdFromToken(token, secret));
+                logger.info("User ID-" +userId + " is authenticated");
             } catch (ExpiredJwtException e) {
                 logger.info("Given jwt token is expired !!");
             } catch (MalformedJwtException e) {
@@ -60,12 +60,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             logger.info("Authentication not present!");
         }
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if (userId != 0 && SecurityContextHolder.getContext().getAuthentication() == null) {
+            User user = userService.loadUserById(userId);
 
             // checking token validation and checking if token is invalidated (logout) or not
-            if (Objects.nonNull(userDetails) && jwtHelper.validateToken(token, userDetails, secret) && jwtHelper.isTokenInBlacklist(token)) {
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            if (Objects.nonNull(user) && jwtHelper.validateToken(token, String.valueOf(user.getUserId()), user.getClass().getSimpleName(), secret) && jwtHelper.isTokenInBlacklist(token)) {
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else {

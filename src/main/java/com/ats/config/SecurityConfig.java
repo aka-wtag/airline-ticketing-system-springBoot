@@ -51,7 +51,7 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
                 .antMatchers(HttpMethod.DELETE,"/flights/*").hasRole("Admin")
                 .antMatchers(HttpMethod.GET, "/flights").permitAll()
                 .antMatchers(HttpMethod.GET, "/flights/*").permitAll()
-                .antMatchers(HttpMethod.POST, "/passengers/*/bookings").hasRole("Passenger")
+                .antMatchers(HttpMethod.POST, "/passengers/*/bookings").hasAnyRole("Admin", "Passenger")
                 .antMatchers(HttpMethod.GET, "/passengers/*/bookings/*").hasAnyRole("Admin", "Passenger")
                 .antMatchers(HttpMethod.GET, "/bookings").hasRole("Admin")
                 .antMatchers(HttpMethod.DELETE, "/passengers/*/bookings/*").hasAnyRole("Admin", "Passenger")

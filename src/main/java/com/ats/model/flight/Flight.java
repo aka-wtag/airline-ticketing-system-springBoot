@@ -22,13 +22,11 @@ public class Flight implements Serializable {
     @GeneratedValue
     public int flightId;
     @Column(nullable = false)
-    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate departureDate;
     @Column(nullable = false)
     @JsonFormat(pattern = "HH:mm")
     private LocalTime departureTime;
     @Column(nullable = false)
-    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate arrivalDate;
     @Column(nullable = false)
     @JsonFormat(pattern = "HH:mm")

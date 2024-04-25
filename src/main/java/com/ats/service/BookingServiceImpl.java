@@ -41,11 +41,14 @@ public class BookingServiceImpl implements BookingService{
     public BookingOutputDto bookTicket(int passengerId, CreateBookingDto createBookingDto) {
         Passenger passenger = userService.getPassenger(passengerId);
 
-        Principal principal = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        // Checking if booking is requested by the authenticated user or not
-        if(!Objects.equals(passenger.getUserEmail(), principal.getName())){
+        // Checking if bookings cancellation is requested by the authenticated user or not
+        if(authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_Admin"))) {
+          // Checking if booking is requested by the authenticated user or not
+          if (!Objects.equals(passenger.getUserEmail(), authentication.getName())) {
             throw new BadRequestException("Not authorized to add booking to other passenger");
+          }
         }
 
         Flight flight = flightService.getFlight(createBookingDto.getFlightId());

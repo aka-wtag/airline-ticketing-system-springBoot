@@ -27,8 +27,8 @@ public class RefreshTokenService {
 //            throw new BadRequestException("Token is not valid");
 //        }
 
-        String newAccessToken = jwtService.generateAccessToken(user);
-        String newRefreshToken = jwtService.generateRefreshToken(user);
+        String newAccessToken = jwtService.generateAccessToken(String.valueOf(user.getUserId()), user.getClass().getSimpleName());
+        String newRefreshToken = jwtService.generateRefreshToken(String.valueOf(user.getUserId()), user.getClass().getSimpleName());
 
         return RefreshTokenResponse
                 .builder()

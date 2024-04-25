@@ -13,7 +13,6 @@ import java.time.LocalTime;
 @Setter
 public class CreateFlightDto {
     @FutureOrPresent(message = "The date must be in the future.")
-    @JsonFormat(pattern = "dd-MM-yyyy")
     @NotNull(message = "Departure Date must be provided")
     private LocalDate departureDate;
 
@@ -22,7 +21,6 @@ public class CreateFlightDto {
     private LocalTime departureTime;
 
     @FutureOrPresent(message = "The date must be in the future.")
-    @JsonFormat(pattern = "dd-MM-yyyy")
     @NotNull(message = "Arrival Date must be provided")
     private LocalDate arrivalDate;
 
