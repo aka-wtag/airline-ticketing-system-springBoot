@@ -11,9 +11,6 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class CreateAirlineDto {
-    @NotEmpty(message = "Airline model must be provided")
-    private String airlineModel;
-
     @NotEmpty(message = "Airline name must be provided")
     private String airlineName;
 

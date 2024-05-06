@@ -24,8 +24,11 @@ public class AirlineServiceImpl implements AirlineService {
 
     @Override
     public Airline addAirline(CreateAirlineDto createAirlineDto) {
-        Airline airline = FactoryObjectMapper.convertAirlineInputToModel(createAirlineDto);
-        return airlineRepository.save(airline);
+      Airline lastAirline = airlineRepository.findFirstByAirlineNameOrderByAirlineIdDesc(createAirlineDto.getAirlineName());
+      String lastAirlineModel = lastAirline != null ? lastAirline.getAirlineModel() : null;
+      Airline airline = FactoryObjectMapper.convertAirlineInputToModel(createAirlineDto, lastAirlineModel);
+
+      return airlineRepository.save(airline);
     }
 
     @Override

@@ -12,6 +12,7 @@ import com.ats.model.user.CreatePassengerDto;
 import com.ats.model.user.PassengerOutputDto;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class FactoryObjectMapper {
     public static Passenger convertPassengerInputToModel(CreatePassengerDto createPassengerDto){
@@ -35,14 +36,21 @@ public class FactoryObjectMapper {
         return passengerOutputDto;
     }
 
-    public static Airline convertAirlineInputToModel(CreateAirlineDto createAirlineDto){
+    public static Airline convertAirlineInputToModel(CreateAirlineDto createAirlineDto, String lastAirlineModel){
         Airline airline = new Airline();
-        airline.setAirlineModel(createAirlineDto.getAirlineModel());
+        airline.setAirlineModel(generateAirlineModel(createAirlineDto.getAirlineName(), lastAirlineModel));
         airline.setAirlineName(createAirlineDto.getAirlineName());
         airline.setNumberOfSeats(createAirlineDto.getNumberOfSeats());
         return airline;
     }
 
+    public static String generateAirlineModel(String airlineName, String lastAirlineModel) {
+      int airlineModelId = 101;
+      if(Objects.nonNull(lastAirlineModel)) {
+        airlineModelId = Integer.parseInt(lastAirlineModel.split("-")[1]) + 1;
+      }
+      return airlineName.substring(0, 2).toUpperCase() + "-" + airlineModelId;
+    }
 
     public static Flight convertFlightInputToModel(CreateFlightDto createFlightDto, Airline airline){
         Flight flight = new Flight();

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AirlineRepository extends JpaRepository<Airline, Integer> {
+  Airline findFirstByAirlineNameOrderByAirlineIdDesc(String airlineName);
 }

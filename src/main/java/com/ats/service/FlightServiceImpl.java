@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -37,6 +38,11 @@ public class FlightServiceImpl implements FlightService{
         // Checking if arrival time is after departure time or not
         if (createFlightDto.getDepartureDate().isEqual(createFlightDto.getArrivalDate()) && createFlightDto.getDepartureTime().isAfter(createFlightDto.getArrivalTime())){
             throw new BadRequestException("Departure Time ahead of arrival Time");
+        }
+
+        // Checking if source and destination are same or not
+        if(Objects.equals(createFlightDto.getArrivalLocation(), createFlightDto.getDepartureLocation())){
+          throw new BadRequestException("Source and Destination cannot be same");
         }
 
         Airline airline = airlineService.getAirline(createFlightDto.getAirlineId());
