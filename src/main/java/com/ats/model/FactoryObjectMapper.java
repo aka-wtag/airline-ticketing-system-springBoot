@@ -45,9 +45,13 @@ public class FactoryObjectMapper {
     }
 
     public static String generateAirlineModel(String airlineName, String lastAirlineModel) {
-      int airlineModelId = 101;
+      int airlineModelId = 0;
       if(Objects.nonNull(lastAirlineModel)) {
-        airlineModelId = Integer.parseInt(lastAirlineModel.split("-")[1]) + 1;
+          try {
+              airlineModelId = Integer.parseInt(lastAirlineModel.split("-")[1]) + 1;
+          } catch (NumberFormatException e) {
+              airlineModelId = 901;
+          }
       }
       return airlineName.substring(0, 2).toUpperCase() + "-" + airlineModelId;
     }

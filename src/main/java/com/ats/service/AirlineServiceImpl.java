@@ -1,5 +1,6 @@
 package com.ats.service;
 
+import com.ats.exception.BadRequestException;
 import com.ats.exception.ObjectNotFoundException;
 import com.ats.model.FactoryObjectMapper;
 import com.ats.model.airline.Airline;
@@ -7,6 +8,8 @@ import com.ats.model.airline.CreateAirlineDto;
 import com.ats.model.airline.UpdateAirlineDto;
 import com.ats.repository.AirlineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,12 +49,18 @@ public class AirlineServiceImpl implements AirlineService {
     @Override
     public void deleteAirline(int airlineId) {
         Airline fetchedAirline = airlineRepository.findById(airlineId).orElseThrow(() -> new ObjectNotFoundException("Airline " + airlineId + " not found"));
+
+        if(!fetchedAirline.getFlights().isEmpty()){
+            throw new BadRequestException("Airline has associated flights");
+        }
+
         airlineRepository.delete(fetchedAirline);
     }
 
     @Override
-    public List<Airline> getAllAirline() {
-        return airlineRepository.findAll();
+    @Transactional(readOnly = true)
+    public Page<Airline> getAirlines(Pageable pageable) {
+        return airlineRepository.findAllByOrderByAirlineIdDesc(pageable);
     }
 
     @Override

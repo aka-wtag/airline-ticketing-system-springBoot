@@ -4,10 +4,15 @@ import com.ats.exception.BadRequestException;
 import com.ats.exception.ObjectNotFoundException;
 import com.ats.exception.UserAlreadyExistsException;
 import com.ats.model.FactoryObjectMapper;
+import com.ats.model.booking.Booking;
+import com.ats.model.booking.BookingOutputDto;
 import com.ats.model.user.*;
 import com.ats.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,6 +24,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -114,16 +120,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PassengerOutputDto> getAllPassengers() {
-        List<User> users = userRepository.findAll();
-        List<PassengerOutputDto> passengers = new ArrayList<>();
+    public Page<PassengerOutputDto> getPassengers(Pageable pageable) {
+        Page<User> usersPage = userRepository.findAllByOrderByUserIdAsc(pageable);
 
-        for(User u: users){
-            if(u instanceof Passenger) {
-                passengers.add(FactoryObjectMapper.convertPassengerEntityToPassengerOutput((Passenger) u));
-            }
+        List<PassengerOutputDto> passengerDtos = usersPage.stream()
+                .filter(user -> user instanceof Passenger)
+                .map(user -> FactoryObjectMapper.convertPassengerEntityToPassengerOutput((Passenger) user))
+                .collect(Collectors.toList());
+
+        if(Objects.nonNull(pageable)){
+            return new PageImpl<>(passengerDtos, pageable, usersPage.getTotalElements());
         }
-
-        return passengers;
+        return new PageImpl<>(passengerDtos);
     }
 }

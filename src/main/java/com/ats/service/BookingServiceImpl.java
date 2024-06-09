@@ -2,6 +2,7 @@ package com.ats.service;
 
 import com.ats.exception.*;
 import com.ats.model.FactoryObjectMapper;
+import com.ats.model.airline.Airline;
 import com.ats.model.booking.Booking;
 import com.ats.model.booking.CreateBookingDto;
 import com.ats.model.booking.BookingOutputDto;
@@ -10,6 +11,8 @@ import com.ats.model.user.Admin;
 import com.ats.model.user.Passenger;
 import com.ats.repository.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -94,14 +97,9 @@ public class BookingServiceImpl implements BookingService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingOutputDto> getAllBookings() {
-        List<BookingOutputDto> passengerBookings = new ArrayList<>();
-
-        for(Booking booking:  bookingRepository.findAll()){
-            passengerBookings.add(FactoryObjectMapper.convertModelToBookingOutput(booking));
-        }
-
-        return passengerBookings;
+    public Page<BookingOutputDto> getAllBookings(Pageable pageable) {
+        Page<Booking> bookings = bookingRepository.findAllByOrderByBookingNumberDesc(pageable);
+        return bookings.map(FactoryObjectMapper::convertModelToBookingOutput);
     }
 
     @Override

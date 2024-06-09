@@ -5,12 +5,16 @@ import com.ats.model.airline.CreateAirlineDto;
 import com.ats.model.airline.UpdateAirlineDto;
 import com.ats.service.AirlineService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/airlines")
@@ -28,8 +32,16 @@ public class AirlineController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Airline>> getAirlines(){
-        List<Airline> airlines = airlineService.getAllAirline();
+    public ResponseEntity<Page<Airline>> getAirlines(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+        Pageable pageable = null;
+
+        if(Objects.nonNull(page) && Objects.nonNull(size)){
+            pageable = PageRequest.of(page, size);
+        }
+
+        Page<Airline> airlines = airlineService.getAirlines(pageable);
         return ResponseEntity.ok(airlines);
     }
 

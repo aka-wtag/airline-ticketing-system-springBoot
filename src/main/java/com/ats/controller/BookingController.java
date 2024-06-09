@@ -7,12 +7,16 @@ import com.ats.service.BookingService;
 import com.ats.service.FlightService;
 import com.ats.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 public class BookingController {
@@ -39,8 +43,15 @@ public class BookingController {
 
 
     @GetMapping(value = "/bookings")
-    public ResponseEntity<List<BookingOutputDto>> getAllBookings(){
-        List<BookingOutputDto> bookings = bookingService.getAllBookings();
+    public ResponseEntity<Page<BookingOutputDto>> getAllBookings(@RequestParam(required = false) Integer page,
+                                                                 @RequestParam(required = false) Integer size){
+        Pageable pageable = null;
+
+        if(Objects.nonNull(page) && Objects.nonNull(size)){
+            pageable = PageRequest.of(page, size);
+        }
+
+        Page<BookingOutputDto> bookings = bookingService.getAllBookings(pageable);
         return ResponseEntity.ok(bookings);
     }
 

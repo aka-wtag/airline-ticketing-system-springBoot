@@ -4,15 +4,20 @@ import com.ats.exception.BadRequestException;
 import com.ats.exception.ObjectNotFoundException;
 import com.ats.model.FactoryObjectMapper;
 import com.ats.model.airline.Airline;
+import com.ats.model.booking.Booking;
+import com.ats.model.booking.BookingOutputDto;
 import com.ats.model.flight.Flight;
 import com.ats.model.flight.CreateFlightDto;
 import com.ats.model.flight.UpdateFlightDto;
 import com.ats.repository.FlightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,14 +62,14 @@ public class FlightServiceImpl implements FlightService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<Flight> getAllFlights() {
-        return flightRepository.findAll();
+    public Page<Flight> getFlights(Pageable pageable) {
+        return flightRepository.findAllByOrderByFlightIdDesc(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Flight> getFilteredFlights(LocalDate departureDate, String departureLocation, String arrivalLocation) {
-        return flightRepository.findAllByDepartureLocationAndArrivalLocationAndDepartureDate(
+        return flightRepository.findFlights(
                 arrivalLocation,
                 departureLocation,
                 departureDate);
@@ -99,6 +104,12 @@ public class FlightServiceImpl implements FlightService{
     @Override
     public void deleteFlight(int flightId) {
         Flight dbFlight = flightRepository.findById(flightId).orElseThrow(() -> new ObjectNotFoundException("Flight ID-" + flightId + " not found"));
+
+        // Checking if flight cancellation is 2 hrs before departure time or not
+        if(LocalDateTime.of(dbFlight.getDepartureDate(), dbFlight.getDepartureTime()).isBefore(LocalDateTime.now().plusHours(2))){
+            throw new BadRequestException("Time for Flight cancellation is over");
+        }
+
         flightRepository.delete(dbFlight);
     }
 }
