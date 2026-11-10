@@ -33,7 +33,6 @@ jobs:
             latest=false
           tags: |
             type=raw,value=backend-latest
-            type=ref,event=branch,suffix=-backend
             type=semver,pattern={{version}},prefix=backend-
 
       - name: Build and Push
