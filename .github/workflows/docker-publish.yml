@@ -28,7 +28,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/ats-app
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/ats
           flavor: |
             latest=false
           tags: |
