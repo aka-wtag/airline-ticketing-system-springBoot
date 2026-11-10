@@ -31,7 +31,7 @@ jobs:
         run: mvn checkstyle:checkstyle
 
       - name: Setup Reviewdog
-        uses: reviewdog/action-setup@v3
+        uses: reviewdog/action-setup@v1 # Changed from @v3 to @v1
         with:
           reviewdog_version: latest
 
